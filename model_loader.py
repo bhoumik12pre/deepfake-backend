@@ -1,29 +1,22 @@
 import torch
-from transformers import ViTForImageClassification, ViTConfig
-import os
+from transformers import ViTForImageClassification
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+_model = None
 
-def load_model():
-    config = ViTConfig.from_pretrained(
+def get_model():
+global _model
+
+```
+if _model is None:
+    print("Loading model into memory...")
+    _model = ViTForImageClassification.from_pretrained(
         "google/vit-base-patch16-224",
-        num_labels=2,
-        output_attentions=True
+        num_labels=2
     )
 
-    model = ViTForImageClassification.from_pretrained(
-        "google/vit-base-patch16-224",
-        config=config,
-        ignore_mismatched_sizes=True
-    )
+    state = torch.load("model/vit_face_final_best.pth", map_location="cpu")
+    _model.load_state_dict(state, strict=False)
+    _model.eval()
 
-    model_path = "model/vit_face_final_best.pth"
-
-    if not os.path.exists(model_path):
-        raise FileNotFoundError("Model file not found in /model folder")
-
-    model.load_state_dict(torch.load(model_path, map_location=device))
-    model.to(device)
-    model.eval()
-
-    return model, device
+return _model
+```
