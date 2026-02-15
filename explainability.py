@@ -1,4 +1,6 @@
 import numpy as np
+import matplotlib
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from PIL import Image
 import io
@@ -32,3 +34,4 @@ def overlay_heatmap_on_image(image, heatmap):
     buf.seek(0)
 
     return Image.open(buf)
+
